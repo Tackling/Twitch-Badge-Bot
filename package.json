@@ -1,0 +1,11 @@
+{
+  "name": "badgebot",
+  "version": "1.0.0",
+  "description": "BadgeBOT - Twitch badge notification bot",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.21.4"
+  },
+  "author": "Tackling",
+  "license": "MIT"
+}
