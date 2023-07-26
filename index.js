@@ -9,11 +9,17 @@ const accessTokenUrl = `https://id.twitch.tv/oauth2/token?client_id=${clientId}&
 const badgesUrl = 'https://api.twitch.tv/helix/chat/badges/global';
 
 let currentVersion = null;
+let accessToken = null;
 
 async function getAccessToken() {
+  if (accessToken) {
+    return accessToken; // Return the cached access token if available
+  }
+
   try {
     const response = await axios.post(accessTokenUrl);
-    return response.data.access_token;
+    accessToken = response.data.access_token;
+    return accessToken;
   } catch (error) {
     throw new Error('Error retrieving access token: ' + error.message);
   }
@@ -35,9 +41,15 @@ async function checkBadgeUpdates() {
       }
     });
 
-    const latestVersion = response.data.data[0].version;
+    const latestBadge = response.data.data[0];
+    const latestVersion = latestBadge.version;
+    const latestBadgeName = latestBadge.title;
+    const latestBadgeImageURL = latestBadge.image_url_4x;
+
     if (currentVersion && latestVersion > currentVersion) {
-      sendDiscordNotification('**New badge available!**', roleId);
+      const message = `**New badge available!** It's called "${latestBadgeName}". Here's what it looks like: ${latestBadgeImageURL}`;
+      console.log(message); // Print the message to the console
+      sendDiscordNotification(message, roleId);
     }
 
     currentVersion = latestVersion;
